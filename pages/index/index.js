@@ -5,7 +5,8 @@ Page({
   data: {
     remind: '加载中',
     angle: 0,
-    userInfo: {}
+    userInfo: {},
+    regFlag:true
   },
   goToIndex:function(){
     wx.switchTab({
@@ -16,6 +17,7 @@ Page({
     wx.setNavigationBarTitle({
       title: app.globalData.shopName
     });
+    this.checkLogin()
   },
   onShow:function(){
 
@@ -38,7 +40,34 @@ Page({
       }
     });
   },
+  checkLogin:function(){
+    var that = this;
+    wx.login({
+      success: (res) => {
+        if(!res.code){
+          app.alert({'content':"登录失败，请重新登录"});
+          return;
+        }
+        wx.request({
+          url:app.buildUrl("/member/check-reg"),
+          header:app.getRequestHeader(),
+          method:"POST",
+          data:{code:res.code},
+          success:function(res){
+            if (res.data.code != 200){
+              that.setData({
+                regFlag:false
+              });
+              return;
+            }
+            // that.goToIndex()
+          }
+        });
+      },
+    })
+  },
   login:function(e){
+    var that = this;
     app.console(e);
     if (!e.detail.userInfo){
       app.alert({'content':'登录失败，请重新登录'})
@@ -54,11 +83,16 @@ Page({
         }
         data['code'] = res.code;
         wx.request({
-          url:"http://8.140.196.190:5001/api/member/login",
+          url:app.buildUrl("/member/login"),
           header:app.getRequestHeader(),
           method:"POST",
           data:data,
           success:function(res){
+            if(res.data.code != 200){
+              app.alert({'content':res.data.msg})
+              return;
+            }
+            that.goToIndex();
           }
         });
       },
