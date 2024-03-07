@@ -68,5 +68,19 @@ App({
           _paramUrl = "?" + _paramUrl;
       }
       return url + _paramUrl;
+    },
+    getCache:function(key){
+      var value = undefined;
+      try{
+        var value = wx.getStorageSync(key);
+      } catch(e){
+      }
+      return value;
+    },
+    setCache:function(key, value){
+      wx.setStorage({
+        key:key, 
+        data:value
+      });
     }
 });
