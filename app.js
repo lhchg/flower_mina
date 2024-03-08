@@ -5,7 +5,7 @@ App({
     globalData: {
         userInfo: null,
         version: "1.0",
-        shopName: "Python3 + Flask 订餐全栈系统",
+        shopName: "蔓竹花店",
         domain:"http://8.140.196.190:5001/api"
     },
     tip:function( params ){
